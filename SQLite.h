@@ -88,8 +88,23 @@ class Connection
         }
 };
 
+template <typename T>
+struct Reader
+{
+    int GetInt(int const column = 0) const noexcept
+    {
+        return sqlite3_column_int( static_cast<T const*>(this)->GetAbi(), column);
+    }
 
-class Statement
+    char const * GetString(int const column = 0) const noexcept
+    {
+        return reinterpret_cast<char const *>(sqlite3_column_text(
+            static_cast<T const*>(this)->GetAbi(), column));
+    }
+
+};
+
+class Statement : public Reader<Statement>
 {
     struct StatementHandleTraits  : HandleTraits<sqlite3_stmt *>
     {
@@ -137,5 +152,20 @@ public:
         InternalPrepare(connection, sqlite3_prepare_v2, text);
     }
 
-    
+    bool Step() const
+    {
+        int const result = sqlite3_step(GetAbi());
+
+        if (result == SQLITE_ROW)
+            return true;
+        if (result == SQLITE_DONE)
+            return false;
+
+        ThrowLastError();
+    }
+
+    void Execute() const
+    {
+        VERIFY(!Step());
+    }
 };

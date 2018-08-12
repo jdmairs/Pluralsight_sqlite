@@ -8,7 +8,11 @@ int main(int, char**) {
     {
         Connection connection = Connection::Memory();
         Statement statement;
-        statement.Prepare(connection, "select 'Hello world'");
+        statement.Prepare(connection, "select 'Hello world', 1234");
+        while (statement.Step())
+        {
+            std::cout << statement.GetString(0) << " " << statement.GetInt(1) << "\n";
+        }
     }
     catch (Exception const &e)
     {
