@@ -3,14 +3,10 @@
 #include "SQLite.h"
 
 int main(int, char**) {
-    ConnectionHandle connection;
-
+   
     try
     {
-        if (SQLITE_OK != sqlite3_open(":badmemory:", connection.Set()))
-        {
-            throw Exception(connection.Get());
-        }
+        Connection connection = Connection::Memory();
     }
     catch (Exception const &e)
     {
