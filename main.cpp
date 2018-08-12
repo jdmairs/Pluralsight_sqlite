@@ -7,6 +7,8 @@ int main(int, char**) {
     try
     {
         Connection connection = Connection::Memory();
+        Statement statement;
+        
     }
     catch (Exception const &e)
     {

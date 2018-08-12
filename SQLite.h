@@ -86,6 +86,38 @@ class Connection
         {
             InternalOpen(sqlite3_open16, filename);
         }
+};
 
 
+class Statement
+{
+    struct StatementHandleTraits  : HandleTraits<sqlite3_stmt *>
+    {
+        static void Close(Type value) noexcept
+        {
+            VERIFY_(SQLITE_OK, sqlite3_finalize(value));
+        }
+    };
+
+    using StatementHandle = Handle<StatementHandleTraits>;
+    StatementHandle myHandle;
+
+public:
+
+    Statement() noexcept = default;
+
+    explicit operator bool() const noexcept
+    {
+        return static_cast<bool>(myHandle);
+    }
+
+    sqlite3_stmt * GetAbi() const noexcept
+    {
+        return myHandle.Get();
+    }
+
+    __declspec(noreturn) void ThrowLastError() const
+    {
+        throw Exception(sqlite3_db_handle(GetAbi()));
+    }
 };
