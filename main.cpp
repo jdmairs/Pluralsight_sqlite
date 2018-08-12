@@ -5,11 +5,15 @@
 int main(int, char**) {
     ConnectionHandle connection;
 
-    int result = sqlite3_open(":memory:", connection.Set());
-
-    if (SQLITE_OK != result)
+    try
     {
-        std::cout << sqlite3_errmsg(connection.Get());
-        return result;
+        if (SQLITE_OK != sqlite3_open(":badmemory:", connection.Set()))
+        {
+            throw Exception(connection.Get());
+        }
+    }
+    catch (Exception const &e)
+    {
+        std::cout << e.Message << " (error code): " << e.Result << "\n";
     }
 }
