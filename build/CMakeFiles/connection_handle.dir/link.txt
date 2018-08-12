@@ -1,1 +1,0 @@
-/usr/bin/clang++  -g -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/connection_handle.dir/main.cpp.o CMakeFiles/connection_handle.dir/sqlite3.c.o  -o connection_handle 
