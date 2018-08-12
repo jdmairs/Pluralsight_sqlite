@@ -1,10 +1,10 @@
 #pragma once
-
-#ifdef _DEBUG
+#include <cassert>
+#if defined(_DEBUG) && defined(_MSC_VER) 
 #include <crtdbg.h>
 #define ASSERT _ASSERTE
 #else
-    #define ASSERT __noop
+    #define ASSERT assert
 #endif
 
 template <typename T>

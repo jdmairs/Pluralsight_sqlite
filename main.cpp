@@ -1,8 +1,8 @@
 #include "sqlite3.h"
 #include <iostream>
-#include "Handle.h"
+#include "handle.h"
 
-#ifdef _DEBUG
+#if defined(_DEBUG) && defined(_MSC_VER)
 #define VERIFY ASSERT
 #define VERIFY_(result, expression) ASSERT(result == expression)
 #else

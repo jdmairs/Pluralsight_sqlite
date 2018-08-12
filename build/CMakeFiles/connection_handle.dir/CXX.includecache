@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/jmairs/Documents/Pluralsight_sqlite/handle.h
+cassert
+-
+crtdbg.h
+-
+
+/Users/jmairs/Documents/Pluralsight_sqlite/main.cpp
+sqlite3.h
+/Users/jmairs/Documents/Pluralsight_sqlite/sqlite3.h
+iostream
+-
+handle.h
+/Users/jmairs/Documents/Pluralsight_sqlite/handle.h
+
+/Users/jmairs/Documents/Pluralsight_sqlite/sqlite3.h
+stdarg.h
+-
+
