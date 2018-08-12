@@ -8,7 +8,7 @@ int main(int, char**) {
     {
         Connection connection = Connection::Memory();
         Statement statement;
-        
+        statement.Prepare(connection, "select 'Hello world'");
     }
     catch (Exception const &e)
     {

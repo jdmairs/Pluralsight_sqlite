@@ -102,6 +102,17 @@ class Statement
     using StatementHandle = Handle<StatementHandleTraits>;
     StatementHandle myHandle;
 
+    template <typename F, typename C>
+    void InternalPrepare(Connection const & connection, F prepare, C const * const text)
+    {
+        ASSERT(connection);
+
+        if (SQLITE_OK != prepare(connection.GetAbi(), text, -1, myHandle.Set(), nullptr))
+        {
+            connection.ThrowLastError();
+        }
+    }
+
 public:
 
     Statement() noexcept = default;
@@ -120,4 +131,11 @@ public:
     {
         throw Exception(sqlite3_db_handle(GetAbi()));
     }
+
+    void Prepare(Connection const & connection, char const *const text)
+    {
+        InternalPrepare(connection, sqlite3_prepare_v2, text);
+    }
+
+    
 };
