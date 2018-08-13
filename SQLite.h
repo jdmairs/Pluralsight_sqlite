@@ -102,6 +102,10 @@ struct Reader
             static_cast<T const*>(this)->GetAbi(), column));
     }
 
+    int GetStringLength(int const column =0)
+    {
+        return sqlite3_column_bytes(static_cast<T const*>(this)->GetAbi(), column);
+    }
 };
 
 class Statement : public Reader<Statement>

@@ -11,7 +11,8 @@ int main(int, char**) {
         statement.Prepare(connection, "select 'Hello world', 1234");
         while (statement.Step())
         {
-            std::cout << statement.GetString(0) << " " << statement.GetInt(1) << "\n";
+            int length = statement.GetStringLength(0);
+            std::cout << length << " " << statement.GetString(0) << " " << statement.GetInt(1) << "\n";
         }
     }
     catch (Exception const &e)
