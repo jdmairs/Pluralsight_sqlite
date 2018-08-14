@@ -8,7 +8,10 @@ int main(int, char**) {
     {
         Connection connection = Connection::Memory();
         Statement statement;
-        statement.Prepare(connection, "select 'Hello' union all select  'World'");
+        statement.Prepare(connection, "select ?1 union all select ?2");
+        std::string lvalue{"c14 rules"};
+        statement.BindAll(std::string("hello"), lvalue);
+
         for (Row const & row : statement)
         {
             std::cout << row.GetString(0) << "\n";

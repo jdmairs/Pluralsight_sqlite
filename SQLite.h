@@ -132,6 +132,16 @@ class Statement : public Reader<Statement>
         }
     }
 
+    void InternalBind(int) const noexcept
+    {}
+
+    template <typename First, typename ... Rest>
+    void InternalBind(int const index, First && first, Rest && ... rest) const
+    {
+        Bind(index, std::forward<First>(first));
+        InternalBind(index + 1, std::forward<Rest>(rest)...);
+    }
+
 public:
 
     Statement() noexcept = default;
@@ -171,6 +181,62 @@ public:
     void Execute() const
     {
         VERIFY(!Step());
+    }
+
+    void Bind(int const index, int const value)
+    {
+        if (SQLITE_OK != sqlite3_bind_int(GetAbi(), index, value))
+        {
+            ThrowLastError();
+        }
+    }
+
+    void Bind(int const index, char const * const value, int const size = -1) const
+    {
+        if (SQLITE_OK != sqlite3_bind_text(GetAbi(), index, value, size, SQLITE_STATIC))
+        {
+            ThrowLastError();
+        }
+    }
+
+    void Bind(int const index, wchar_t const * const value, int const size = -1) const
+    {
+        if (SQLITE_OK != sqlite3_bind_text16(GetAbi(), index, value, size, SQLITE_STATIC))
+        {
+            ThrowLastError();
+        }
+    }
+
+    void Bind(int const index, std::string const & value) const
+    {
+        Bind(index, value.c_str(), value.size());
+    }
+
+    void Bind(int const index, std::wstring const & value) const
+    {
+        Bind(index, value.c_str(), value.size() * sizeof(wchar_t));
+    }
+
+    void Bind(int const index, std::string && value) const
+    {
+        if (SQLITE_OK != sqlite3_bind_text(GetAbi(), index, value.c_str(), value.size(), SQLITE_TRANSIENT))
+        {
+            ThrowLastError();
+        }
+    }
+
+    void Bind(int const index, std::wstring && value) const
+    {
+        if (SQLITE_OK != sqlite3_bind_text16(GetAbi(), index, value.c_str(), value.size() * sizeof(wchar_t), SQLITE_TRANSIENT))
+        {
+            ThrowLastError();
+        }
+    }
+
+    template <typename ... Values>
+    void BindAll(Values && ...values) const
+    {
+        InternalBind(1, std::forward<Values>(values)...);
     }
 };
 
