@@ -173,3 +173,68 @@ public:
         VERIFY(!Step());
     }
 };
+
+class Row : public Reader<Row>
+{
+    sqlite3_stmt * myStatement = nullptr;
+    
+    public:
+
+    sqlite3_stmt * GetAbi() const noexcept
+    {
+        return myStatement;
+    }
+
+    Row(sqlite3_stmt * const statement) noexcept :
+        myStatement(statement)
+        {
+
+        }
+};
+
+class RowIterator
+{
+    Statement const * myStatement = nullptr;
+
+    public:
+
+    RowIterator() noexcept = default;
+
+    RowIterator(Statement const & statement) noexcept
+    {
+        if (statement.Step())
+        {
+            myStatement = &statement;
+        }
+    }
+
+    RowIterator & operator++() noexcept
+    {
+        if (!myStatement->Step())
+        {
+            myStatement = nullptr;
+        }
+
+        return *this;
+    }
+
+    bool operator !=(RowIterator const & other) const noexcept
+    {
+        return myStatement != other.myStatement;
+    }
+
+    Row operator *() const noexcept
+    {
+        return Row(myStatement->GetAbi());
+    }
+};
+
+inline RowIterator begin(Statement const & statement) noexcept
+{
+    return RowIterator(statement);
+}
+
+inline RowIterator end(Statement const &) noexcept
+{
+    return RowIterator();
+}
