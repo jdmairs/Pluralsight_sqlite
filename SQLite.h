@@ -121,8 +121,11 @@ class Statement : public Reader<Statement>
     using StatementHandle = Handle<StatementHandleTraits>;
     StatementHandle myHandle;
 
-    template <typename F, typename C>
-    void InternalPrepare(Connection const & connection, F prepare, C const * const text)
+    template <typename F, typename C, typename ... Values>
+    void InternalPrepare(Connection const & connection, 
+        F prepare, 
+        C const * const text,
+        Values&& ... values)
     {
         ASSERT(connection);
 
@@ -130,6 +133,8 @@ class Statement : public Reader<Statement>
         {
             connection.ThrowLastError();
         }
+
+        BindAll(std::forward<Values>(values)...);
     }
 
     void InternalBind(int) const noexcept
@@ -161,9 +166,10 @@ public:
         throw Exception(sqlite3_db_handle(GetAbi()));
     }
 
-    void Prepare(Connection const & connection, char const *const text)
+    template <typename ... Values>
+    void Prepare(Connection const & connection, char const *const text, Values && ... values)
     {
-        InternalPrepare(connection, sqlite3_prepare_v2, text);
+        InternalPrepare(connection, sqlite3_prepare_v2, text, std::forward<Values>(values)...);
     }
 
     bool Step() const
