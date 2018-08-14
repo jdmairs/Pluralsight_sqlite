@@ -151,6 +151,13 @@ public:
 
     Statement() noexcept = default;
 
+    template <typename C, typename ... Values>
+    Statement(Connection const & connection,
+    C const * const text,
+    Values && ... values)
+    {
+        Prepare(connection, text, std::forward<Values>(values)...);
+    }
     explicit operator bool() const noexcept
     {
         return static_cast<bool>(myHandle);
@@ -309,4 +316,12 @@ inline RowIterator begin(Statement const & statement) noexcept
 inline RowIterator end(Statement const &) noexcept
 {
     return RowIterator();
+}
+
+template <typename C, typename ... Values>
+void Execute(Connection const & connection,
+C const * const text,
+Values && ... values)
+{
+    Statement(connection, text, std::forward<Values>(values) ...).Execute();
 }

@@ -7,13 +7,14 @@ int main(int, char**) {
     try
     {
         Connection connection = Connection::Memory();
-        Statement statement;
-        // did not compile with 25 as int
-        statement.Prepare(connection, "select ?1 union all select ?2", "Vader", "25");
+       
+        Execute(connection, "create table Users (Name)");
+        Execute(connection, "insert into Users values(?)", "Joe");
+        Execute(connection, "insert into Users values(?)", "Beth");
 
-        for (Row const & row : statement)
+        for (Row row : Statement(connection, "select * from Users"))
         {
-            std::cout << row.GetString(0) << "\n";
+            std::cout << row.GetString() << "\n";
         }
     }
     catch (Exception const &e)
