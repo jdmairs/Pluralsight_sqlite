@@ -93,6 +93,11 @@ class Connection
         {
             InternalOpen(sqlite3_open16, filename);
         }
+
+        long long RowId() const noexcept
+        {
+            return sqlite3_last_insert_rowid(GetAbi());
+        }
 };
 
 template <typename T>

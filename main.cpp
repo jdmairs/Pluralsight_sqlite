@@ -27,10 +27,11 @@ int main(int, char**) {
         Execute(connection, "insert into Hens (Name) values (?)", "Marge");
         Execute(connection, "insert into Hens (Name) values (?)",  "Jane");
         Execute(connection, "insert into Hens (Name) values (?)",  "Greta");
+        std::cout << "Inserted " << connection.RowId() << "\n";
 
-        for (Row row : Statement(connection, "select RowId, Name from Hens"))
+        for (Row row : Statement(connection, "select Name from Hens"))
         {
-            std::cout << "rowid=" << row.GetInt(0) << " " << row.GetString(1) << "\n";
+            std::cout << row.GetString(0) << "\n";
         }
     }
     catch (Exception const &e)
