@@ -12,6 +12,15 @@
 #define VERIFY_(result, expression) (expression)
 #endif
 
+enum class Type
+{
+    Integer = SQLITE_INTEGER,
+    Float = SQLITE_FLOAT,
+    Blob = SQLITE_BLOB,
+    Null = SQLITE_NULL,
+    Text = SQLITE_TEXT,
+};
+
 struct Exception
 {
     int Result = 0;
@@ -22,8 +31,6 @@ struct Exception
         Message(sqlite3_errmsg(connection))
     {}
 };
-
-
 
 class Connection
 {
@@ -105,6 +112,11 @@ struct Reader
     int GetStringLength(int const column =0)
     {
         return sqlite3_column_bytes(static_cast<T const*>(this)->GetAbi(), column);
+    }
+
+    Type GetType(int const column = 0) const noexcept
+    {
+        return static_cast<Type>(sqlite3_column_type(static_cast<T const *>(this)->GetAbi(), column));
     }
 };
 
@@ -196,7 +208,7 @@ public:
         VERIFY(!Step());
     }
 
-    void Bind(int const index, int const value)
+    void Bind(int const index, int const value) const
     {
         if (SQLITE_OK != sqlite3_bind_int(GetAbi(), index, value))
         {
@@ -247,7 +259,7 @@ public:
     }
 
     template <typename ... Values>
-    void BindAll(Values && ...values) const
+    void BindAll(Values && ...values)
     {
         InternalBind(1, std::forward<Values>(values)...);
     }
