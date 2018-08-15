@@ -23,13 +23,13 @@ int main(int, char**) {
     {
         Connection connection = Connection::Memory();
        
-        Execute(connection, "create table Things (Content)");
-        Execute(connection, "insert into Things values (?)", "Joe");
-        Execute(connection, "insert into Things values(?)", 3);
+        Execute(connection, "create table Hens (Id, Name)");
+        Execute(connection, "insert into Hens (Id, Name) values (?,?)", 101, "Marge");
+        Execute(connection, "insert into Hens (Id, Name) values (?,?)", 102, "Jane");
 
-        for (Row row : Statement(connection, "select Content from Things"))
+        for (Row row : Statement(connection, "select Id, Name from Hens"))
         {
-            std::cout << TypeName(row.GetType()) << " " << row.GetString() << "\n";
+            std::cout << row.GetInt(0) << " " << row.GetString(1) << "\n";
         }
     }
     catch (Exception const &e)
