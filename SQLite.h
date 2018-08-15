@@ -126,7 +126,7 @@ class Statement : public Reader<Statement>
     {
         static void Close(Type value) noexcept
         {
-            VERIFY_(SQLITE_OK, sqlite3_finalize(value));
+            sqlite3_finalize(value);
         }
     };
 
