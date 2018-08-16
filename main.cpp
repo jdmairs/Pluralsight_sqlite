@@ -21,16 +21,20 @@ int main(int, char**) {
    
     try
     {
-        Connection connection = Connection::Memory();
-       
-        Execute(connection, "create table Things (Content)");
+        // Connection connection = Connection::Memory();
+        Connection connection("C:\\Temp\\Count.db");
+
+        //Execute(connection, "create table Things (Content)");
         Statement insert(connection, "insert into Things (Content) values (?1)");
 
+        Execute(connection,"begin");
         for (int i=0; i != 1000; i++)
         {
             insert.Reset(i);
             insert.Execute();
         }
+
+        Execute(connection,"commit");
 
         Statement count(connection, "select count(*) from Things");
         count.Step();
