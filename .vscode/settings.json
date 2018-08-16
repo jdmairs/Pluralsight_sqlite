@@ -3,7 +3,8 @@
     "files.associations": {
         "xlocale": "cpp",
         "system_error": "cpp",
-        "xtr1common": "cpp"
+        "xtr1common": "cpp",
+        "iostream": "cpp"
     },
     "C_Cpp.configurationWarnings": "Disabled"
 }

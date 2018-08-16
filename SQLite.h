@@ -268,6 +268,17 @@ public:
     {
         InternalBind(1, std::forward<Values>(values)...);
     }
+
+    template <typename ... Values>
+    void Reset(Values && ... values) 
+    {
+        if (SQLITE_OK != sqlite3_reset(GetAbi()))
+        {
+            ThrowLastError();
+        }
+
+        BindAll(values ...);
+    }
 };
 
 class Row : public Reader<Row>
