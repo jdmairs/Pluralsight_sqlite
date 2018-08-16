@@ -40,6 +40,9 @@ int main(int, char**) {
             statement.Execute();
         }
 
+        Execute(connection, "delete from Things where Content > 10");
+
+        Execute(connection, "vacuum");
         SaveToDisk(connection, "C:\\temp\\backup.db");
 
     }
