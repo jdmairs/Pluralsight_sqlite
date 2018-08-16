@@ -106,6 +106,56 @@ class Connection
         }
 };
 
+class Backup
+{
+    struct BackupHandleTraits : HandleTraits<sqlite3_backup *>
+    {
+        static void Close(Type value) noexcept
+        {
+            sqlite3_backup_finish(value);
+        }
+    };
+
+    using BackupHandle = Handle<BackupHandleTraits>;
+    BackupHandle myHandle;
+
+    Connection const * myDestination = nullptr;
+
+    public:
+
+    Backup(Connection const & destination,
+    Connection const & source,
+    char const * const destinationName = "main",
+    char const * const sourceName = "main"):
+    myHandle(sqlite3_backup_init(destination.GetAbi(), destinationName,
+    source.GetAbi(),
+    sourceName)),
+    myDestination(&destination)
+    {
+        if (!myHandle)
+        {
+            destination.ThrowLastError();
+        }
+    }
+
+    sqlite3_backup * GetAbi() const noexcept
+    {
+        return myHandle.Get();
+    }
+
+    bool Step(int const pages = -1)
+    {
+        int const result = sqlite3_backup_step(GetAbi(), pages);
+
+        if (result == SQLITE_OK) return true;
+        if (result == SQLITE_DONE) return false;
+
+        myHandle.Reset();
+        myDestination->ThrowLastError();
+    }
+};
+
+
 template <typename T>
 struct Reader
 {
